@@ -1,0 +1,20 @@
+{
+  "name": "workspace",
+  "version": "1.0.0",
+  "description": "Monorepo for Crossify repos",
+  "type": "module",
+  "workspaces": [
+    "*"
+  ],
+  "scripts": {
+    "prep": "node prep.js",
+    "dev": "node run.js dev",
+    "push": "node push.js"
+  },
+  "keywords": [],
+  "author": "Crossify",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
