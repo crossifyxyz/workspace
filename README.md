@@ -73,10 +73,10 @@ npm run dev
 npm run push
 ```
 
-For specific packages, navigate to their directories and run Yarn commands as needed.
+For specific packages, navigate to their directories and run NPM commands as needed.
 
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
 
-This README provides an overview of the monorepo structure, how to get started, how to use Yarn commands, contributing guidelines, and licensing information. Customize it further to match your specific monorepo setup and needs.
+This README provides an overview of the monorepo structure, how to get started, how to use NPM commands, contributing guidelines, and licensing information. Customize it further to match your specific monorepo setup and needs.
