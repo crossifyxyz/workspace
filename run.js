@@ -8,15 +8,28 @@ const rl = readline.createInterface({
 });
 
 const repos = config.repos.filter((repo) => repo !== ".");
-const selectedRepos = [];
+const selectedCommands = [];
 const script = process.argv[2];
+const childProcesses = [];
+const childLookup = {};
 
 function runRepo(repoPath) {
   rl.question(`Do you want to run npm run ${script} in ${repoPath}? (y/n): `, (answer) => {
     if (answer.toLowerCase() === "y") {
-      selectedRepos.push(`cd ${repoPath} && npm run ${script}`);
+      selectedCommands.push({ command: `cd ${repoPath} && npm run ${script}`, repo: repoPath });
     }
     runNextRepo();
+  });
+}
+
+function runSelectedRepos() {
+  selectedCommands.forEach(({ command, repo }) => {
+    const child = spawn('sh', ['-c', command], {
+      stdio: ['pipe', 'inherit', 'inherit']
+    });
+
+    childLookup[repo] = child;
+    childProcesses.push(child);
   });
 }
 
@@ -28,24 +41,31 @@ function runNextRepo() {
     console.log("All repositories have been processed.");
     rl.close();
 
-    if (selectedRepos.length > 0) {
-      const concurrentlyCommand = `concurrently "${selectedRepos.join('" "')}"`;
+    if (selectedCommands.length > 0) {
+      console.log(`Running selected repositories with ${script}...`);
+      runSelectedRepos();
 
-      console.log(`Running repositories concurrently with ${script}...`);
-      const child = spawn(concurrentlyCommand, {
-        shell: true,
-        stdio: "inherit",
+      // Listen for further input
+      const rlCommand = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+        prompt: '>'
       });
 
-      child.on("exit", () => {
-        console.log(`All repositories have been run concurrently with ${script}.`);
+      rlCommand.prompt();
+
+      rlCommand.on('line', (input) => {
+        const [repoSpecific, command] = input.split(":");
+
+        if (childLookup[repoSpecific]) {
+          childLookup[repoSpecific].stdin.write(command + "\n");
+        } else {
+          childProcesses.forEach(child => child.stdin.write(input + "\n"));
+        }
+        
+        rlCommand.prompt();
       });
 
-      // Handle user's attempt to exit.
-      process.on("SIGINT", () => {
-        child.kill();
-        process.exit();
-      });
     } else {
       console.log(`No repositories selected to run ${script}.`);
     }
@@ -62,3 +82,11 @@ function main() {
 }
 
 main();
+
+// Handle user's attempt to exit.
+process.on("SIGINT", () => {
+  for (let child of childProcesses) {
+    child.kill();
+  }
+  process.exit();
+});

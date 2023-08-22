@@ -9,12 +9,10 @@
   "scripts": {
     "prep": "node prep.js",
     "dev": "node run.js dev",
-    "push": "node push.js"
+    "push": "node push.js",
+    "kill:ports": "chmod +x killPorts.sh && ./killPorts.sh"
   },
   "keywords": [],
   "author": "Crossify",
-  "license": "ISC",
-  "dependencies": {
-    "concurrently": "^8.2.0"
-  }
+  "license": "ISC"
 }

@@ -1,3 +1,10 @@
+<div align="center">
+
+[![license](https://img.shields.io/badge/license-Apache%202-blue)](/LICENSE.md)
+[![Follow on Twitter](https://img.shields.io/twitter/follow/crossifyxyz.svg?label=follow+CROSSIFY)](https://twitter.com/crossifyxyz)
+
+</div>
+
 # Crossify Monorepo Workspace
 
 This monorepo serves as a workspace for Crossify projects, providing an organized structure for managing related repositories.
@@ -8,6 +15,8 @@ This monorepo serves as a workspace for Crossify projects, providing an organize
 - [Getting Started](#getting-started)
 - [Project Structure](#project-structure)
 - [Usage](#usage)
+- [Interacting with Repositories](#interacting-with-repositories)
+- [Summary](#summary)
 
 ## Introduction
 
@@ -75,8 +84,27 @@ npm run push
 
 For specific packages, navigate to their directories and run NPM commands as needed.
 
-## License
+## Interacting with Repositories
 
-This project is licensed under the [MIT License](LICENSE).
+While the monorepo processes are running, you can interact with them directly from the terminal:
+
+- To send a command to all processes: 
+```bash
+<any_command>
+```
+
+- To target a specific repository:
+```bash
+<repo_name>:<any_command>
+```
+For example, to send a restart command only to the web repo, you would type:
+```bash
+web:restart
+```
+
+This feature allows for flexible and fine-grained control over each repository process directly from your terminal.
+
+## Summary
 
 This README provides an overview of the monorepo structure, how to get started, how to use NPM commands, contributing guidelines, and licensing information. Customize it further to match your specific monorepo setup and needs.
+
