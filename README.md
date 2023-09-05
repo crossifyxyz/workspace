@@ -54,14 +54,17 @@ workspace/
 ├── api/
 ├── analytics/
 ├── event-bus/
-├── ... (other packages)
+├── ... (other repos)
 ├── .gitignore
 ├── package.json
-└── README.md
+├── README.md
+├── LICENSE.md
+├── *.js
+└── *.sh
 ```
 - `@crossify/types/`: Shared types and interfaces used across different projects.
 - `@crossify/mongoose/`: Mongoose schema and models package.
-- `web/`, `api/`, `analytics/`, `event-bus/`: Project-specific packages.
+- `web/`, `api/`, `analytics/`, `event-bus/`: Project-specific repos.
 - `.gitignore`: Git ignore rules for the monorepo.
 - `package.json`: Workspace-level package.json file.
 - `package-lock.json`: NPM lockfile.
