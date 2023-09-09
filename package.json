@@ -4,7 +4,6 @@
   "description": "Monorepo for Crossify repos",
   "type": "module",
   "workspaces": [
-    "*"
   ],
   "scripts": {
     "prep": "node prep.js",

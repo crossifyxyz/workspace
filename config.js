@@ -4,4 +4,7 @@ export default {
     types: true,
     mongoose: true,
   },
+  hasLocalDeps: {
+    mongoose: ["types"],
+  }
 };
