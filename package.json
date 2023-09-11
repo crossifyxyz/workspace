@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "Monorepo for Crossify repos",
   "type": "module",
-  "workspaces": [
-  ],
+  "workspaces": ["types", "mongoose", "event-bus", "api", "web"],
   "scripts": {
     "prep": "node prep.js",
     "dev": "node run.js dev",

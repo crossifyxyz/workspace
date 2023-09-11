@@ -36,7 +36,8 @@ git clone https://github.com/crossify/workspace.git
 cd workspace
 ```
 
-3. Prep repos using prep script:
+3. Prep repos using prep script ( if there is any change in the package.json
+   file of any repo, you need to run this script again ):
 
 ```bash
 npm run prep
@@ -62,6 +63,7 @@ workspace/
 ├── *.js
 └── *.sh
 ```
+
 - `@crossify/types/`: Shared types and interfaces used across different projects.
 - `@crossify/mongoose/`: Mongoose schema and models package.
 - `web/`, `api/`, `analytics/`, `event-bus/`: Project-specific repos.
@@ -76,13 +78,13 @@ You can use NPM scripts to manage and work with the packages in this monorepo:
 - To run dev:
 
 ```bash
-npm run dev
+bun run dev
 ```
 
 - To push changes:
 
 ```bash
-npm run push
+bun run push
 ```
 
 For specific packages, navigate to their directories and run NPM commands as needed.
@@ -91,18 +93,22 @@ For specific packages, navigate to their directories and run NPM commands as nee
 
 While the monorepo processes are running, you can interact with them directly from the terminal:
 
-- To send a command to all processes: 
+- To send a command to all processes:
+
 ```bash
 <any_command>
 ```
 
 - To target a specific repository:
+
 ```bash
 <repo_name>:<any_command>
 ```
+
 For example, to send a restart command only to the web repo, you would type:
+
 ```bash
-web:restart
+web:rs
 ```
 
 This feature allows for flexible and fine-grained control over each repository process directly from your terminal.
@@ -110,4 +116,3 @@ This feature allows for flexible and fine-grained control over each repository p
 ## Summary
 
 This README provides an overview of the monorepo structure, how to get started, how to use NPM commands, contributing guidelines, and licensing information. Customize it further to match your specific monorepo setup and needs.
-

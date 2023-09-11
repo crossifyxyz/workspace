@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# List all active TCP ports
+echo "Listing all active TCP ports:"
+netstat -tuln | grep 'tcp'
+
 # Prompt the user for ports
 echo "Enter ports to kill in the format: 8080,5000"
 read ports

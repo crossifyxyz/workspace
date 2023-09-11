@@ -1,14 +1,23 @@
-import { existsSync } from "fs";
-import { spawnSync } from "child_process";
-import path from "path";
-import config from "./config.js";
+import { existsSync, readFileSync, rmSync } from 'fs';
+import { spawnSync } from 'child_process';
+import path from 'path';
+import config from './config.js';
 
 const repos = config.repos;
 
+/**
+ * Clones the repository at the specified path.
+ *
+ * @param {string} repoPath - The path of the repository to clone.
+ */
 function cloneRepo(repoPath) {
   if (!existsSync(repoPath)) {
     try {
-      const cloneProcess = spawnSync("git", ["clone", `https://github.com/crossify/${repoPath}.git`], { stdio: "inherit" });
+      const cloneProcess = spawnSync(
+        'git',
+        ['clone', `https://github.com/crossify/${repoPath}.git`],
+        { stdio: 'inherit' }
+      );
       if (cloneProcess.error) {
         console.error(`Error cloning repo ${repoPath}:`, cloneProcess.error.message);
       }
@@ -20,44 +29,58 @@ function cloneRepo(repoPath) {
   }
 }
 
-function linkDependencies(repo) {
-  if (config.isNpm[repo]) {
-    console.log(`Running npm link for ${repo}...`);
-    spawnSync('npm', ['link'], { cwd: path.join(process.cwd(), repo), stdio: 'inherit' });
-  } else {
-    // Linking @crossify/ prefixed repos
-    const isNpmRepos = Object.keys(config.isNpm).filter(key => config.isNpm[key]);
-    const isNpmReposWithPrefix = isNpmRepos.map(repo => `@crossify/${repo}`);
-    if (isNpmReposWithPrefix.length > 0) {
-      console.log(`Running npm link ${isNpmReposWithPrefix.join(' ')} for ${repo}...`);
-      spawnSync('npm', ['link', ...isNpmReposWithPrefix], { cwd: path.join(process.cwd(), repo), stdio: 'inherit' });
-    }
-
-    // Linking hasLocalDeps repos
-    const localDeps = config.hasLocalDeps[repo];
-    if (localDeps && localDeps.length > 0) {
-      const localDepsWithPrefix = localDeps.map(dep => `@crossify/${dep}`);
-      console.log(`Running npm link ${localDepsWithPrefix.join(' ')} for ${repo}...`);
-      spawnSync('npm', ['link', ...localDepsWithPrefix], { cwd: path.join(process.cwd(), repo), stdio: 'inherit' });
-    }
+/**
+ * Removes the node_modules folder from the specified repository path.
+ *
+ * @param {string} repoPath - The path of the repository.
+ */
+function removeNodeModules(repoPath) {
+  const nodeModulesPath = path.join(repoPath, 'node_modules');
+  if (existsSync(nodeModulesPath)) {
+    console.log(`Removing node_modules from ${repoPath}...`);
+    rmSync(nodeModulesPath, { recursive: true });
   }
 }
 
-function installAndLinkDependencies(repo) {
-  console.log(`Installing dependencies for ${repo}...`);
-  const installProcess = spawnSync('npm', ['install'], { cwd: path.join(process.cwd(), repo), stdio: 'inherit' });
-  if (installProcess.error) {
-    console.error(`Error installing dependencies for ${repo}:`, installProcess.error.message);
-    return;
+/**
+ * Checks if the line `export PATH=$BUN_INSTALL/bin:$PATH` exists in $HOME/.bashrc.
+ *
+ * @returns {boolean} - True if line exists, false otherwise.
+ */
+function checkBunInBashrc() {
+  const bashrcPath = path.join(process.env.HOME, '.bashrc');
+  if (existsSync(bashrcPath)) {
+    const bashrcContent = readFileSync(bashrcPath, 'utf-8');
+    return bashrcContent.includes('export PATH=$BUN_INSTALL/bin:$PATH');
   }
-
-  linkDependencies(repo);
+  return false;
 }
 
+// Main function
 function main() {
-  repos.forEach(cloneRepo);
+  const reposToRun = repos.filter((i) => i !== '.'); 
+  reposToRun.forEach(cloneRepo);
 
-  repos.filter(i => i !== '.').forEach(installAndLinkDependencies);
+  // Check if bun is installed based on $HOME/.bashrc
+  if (!checkBunInBashrc()) {
+    console.log('Installing bun...');
+    spawnSync('curl -fsSL https://bun.sh/install | bash', {
+      stdio: 'inherit',
+      shell: true,
+    });
+    // source .bashrc from home dir after installing bun
+    console.log('Sourcing .bashrc...');
+    spawnSync('source', ['.bashrc'], { stdio: 'inherit' });
+  } else {
+    console.log('Bun is already installed. Skipping installation.');
+  }
+
+  // Run bun install
+  console.log('Running bun install...');
+  spawnSync('bun', ['install'], { stdio: 'inherit' });
+
+  // Remove node_modules folders from each repo
+  reposToRun.forEach(removeNodeModules);
 }
 
 main();

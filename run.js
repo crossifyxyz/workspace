@@ -14,9 +14,9 @@ const childProcesses = [];
 const childLookup = {};
 
 function runRepo(repoPath) {
-  rl.question(`Do you want to run npm run ${script} in ${repoPath}? (y/n): `, (answer) => {
+  rl.question(`Do you want to run bun run ${script} in ${repoPath}? (y/n): `, (answer) => {
     if (answer.toLowerCase() === "y") {
-      selectedCommands.push({ command: `cd ${repoPath} && npm run ${script}`, repo: repoPath });
+      selectedCommands.push({ command: `cd ${repoPath} && bun run ${script}`, repo: repoPath });
     }
     runNextRepo();
   });
